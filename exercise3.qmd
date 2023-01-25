@@ -1,0 +1,224 @@
+---
+title: "Exercise 3"
+date: 2022-09-05
+date-format: long
+format: 
+  html:
+    theme: litera
+    toc: true
+    code-fold: true
+    execute: 
+      echo: true
+    title-block-banner: "#eba75a"
+  aft-pdf: 
+    toc: false
+    linestretch: 1.5
+    execute: 
+      echo: false
+    pdf-engine: xelatex
+    geometry: margin=1in
+author:
+  - name: Julia Schulte-Cloos
+    affiliations:
+      - id: eui
+        name: European University Institute
+        city: Florence
+        country: Italy
+    orcid: 0000-0001-7223-3602
+  - name: Conrad Coauthor
+    affiliations:
+      - id: oxford
+      - name: University of Oxford
+        city: Oxford
+        country: United Kingdom
+    orcid: 01234-5678-9000-0000
+execute: 
+    warning: false
+    message: false
+filters:
+  - abstract-section
+bibliography: 'literature.bib'
+---
+
+# Abstract
+Here is the abstract. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pellentesque lacus at lorem blandit cursus. Etiam semper, lectus vitae aliquet aliquet, tellus mauris ullamcorper massa, vel laoreet felis orci quis nibh. 
+
+```{r}
+#| label: setup
+#| include: false
+
+pacman::p_load(
+  tidyverse,
+  modelsummary,
+  kableExtra)
+
+```
+
+{{< pagebreak >}}
+
+::: {.content-visible when-format="html"}
+
+## Hello 
+Here is a cool gif that summarizes the main argument of my article. You can only see it because this is rendered to an HTML document (`when-format = html`). 
+![](https://media1.giphy.com/media/xTiTnFbwkFLI7q1eDu/giphy.gif)
+:::
+
+
+
+# {{< meta title >}}
+
+## Introduction
+
+This is the first sentence in my reproducible document.^[This is only a footnote.] Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pellentesque lacus at lorem blandit cursus. Etiam semper, lectus vitae aliquet aliquet, tellus mauris ullamcorper massa, vel laoreet felis orci quis nibh. Lorem Ipsum is not just random text, contrary to common assumption. It is more than 2000 years old and has origins in a work of classical Latin literature from 45 BC. Sections 1.10.32 and 1.10.33 of Cicero’s “de Finibus Bonorum et Malorum” (The Extremes of Good and Evil) are where Lorem Ipsum is found. The philosophy of ethics, which was extremely prominent throughout the Renaissance, is the subject of this book. Lorem Ipsum’s opening phrase, “Lorem ipsum dolor sit amet,” is taken from a Latin phrase.
+
+
+## Results
+
+```{r}
+#| label: estimate-regression-models
+#| tbl-pos: 'tb'
+
+
+
+url <- 'https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/Pulse.csv'
+pulse_data <- read_csv(url) %>%
+  select(-c(1))
+
+
+models <- list(
+  "M1" = lm(Rest ~ Smoke + Exercise + Wgt + Sex,
+            data = pulse_data),
+  "M2" = lm(Rest ~ Smoke*Exercise + Wgt + Sex,
+            data = pulse_data),
+  "M3" = lm(Active ~ Smoke + Exercise + Wgt + Sex,
+            data = pulse_data),
+  "M4" = lm(Active ~ Smoke*Exercise + Wgt + Sex,
+            data = pulse_data)
+)
+
+```
+
+Next, we turn to a more contemporary phenomenon. How do exercising and smoking habits affect the pulse rates of students? The data presented below comes from the [Stat2Data](https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/Pulse.csv) package. We use `modelsummary` [@Arel-Bundock.2020] to present the results in a table. This package is a very powerful to present regression tables in several different output formats. Depending on our preferred table styling package, we can chose among different output formats and then further style the regression table according to our personal needs. In the example below, we use `kableExtra` to style the table.
+
+
+
+
+```{r}
+#| label: tbl-regression
+#| tbl-cap: "Resting and active pulse rates as a function of sex, weight, exercise, and smoking habits among students"
+
+# report only basic goodness-of-fit statistics
+round_function <- function(x) format(round(x, 3))
+gm <- list(
+  list("raw" = "r.squared", "clean" = "R$^2$", "fmt" = round_function),
+  list("raw" = "nobs", "clean" = "Num.Obs.", "fmt" = round_function)
+  )
+
+reg_table <- modelsummary(
+  models,
+  stars = TRUE,
+  # report only basic goodness-of-fit stats
+  gof_map = gm, 
+  escape = FALSE
+  )
+
+reg_table %>%
+  # column labels
+  add_header_above(c(" " = 1,
+                     "Resting Pulse" = 2,
+                     "Active Pulse" = 2)) %>%
+  # footnote
+  add_footnote("Dataset: 'Pulse Rates and Exercise' from the Stat2Data package.",
+               notation = "none"
+  ) 
+
+```
+
+Students who smoke, on average, have a `r tidy(models$M1) %>% dplyr::filter(term == "Smoke") %>% pull(estimate) %>% round(., digits=3)` higher resting pulse than students who do not smoke (see @tbl-regression).
+
+## Side-by-side tables
+
+We can also include two tables side-by-side. They can have an overall caption and a subcaption. 
+
+
+```{r}
+#| label: tbl-side-by-side-regression
+#| tbl-cap: "Pulse rates as a function of sex, weight, exercise, and smoking habits among students"
+#| tbl-subcap: 
+#|   - "Resting Pulse"
+#|   - "Active Pulse"
+#| layout-ncol: 2
+
+
+models_resting <- list(
+  "M1" = lm(Rest ~ Smoke + Exercise + Wgt + Sex,
+            data = pulse_data),
+  "M2" = lm(Rest ~ Smoke*Exercise + Wgt + Sex,
+            data = pulse_data)
+)
+
+models_active <- list(
+  "M3" = lm(Active ~ Smoke + Exercise + Wgt + Sex,
+            data = pulse_data),
+  "M4" = lm(Active ~ Smoke*Exercise + Wgt + Sex,
+            data = pulse_data)
+)
+
+
+modelsummary(
+  models_resting,
+  stars = TRUE,
+  # report only basic goodness-of-fit stats
+  gof_map = gm, 
+  escape = FALSE
+  )
+
+modelsummary(
+  models_active, 
+  stars = TRUE,
+  # report only basic goodness-of-fit stats
+  gof_map = gm, 
+  escape = FALSE
+  )
+
+```
+
+## Conclusion
+
+This is the conclusion and the last sentence of the document. The document was generated on `r lubridate::today()`.
+
+
+```{cat, write-bib-file, engine.opts=list(file = 'literature.bib')}
+
+@Manual{Arel-Bundock.2020,
+  title = {modelsummary: Summary Tables and Plots for Statistical Models and Data: Beautiful, Customizable, and Publication-Ready},
+  author = {Vincent Arel-Bundock},
+  year = {2020},
+  note = {R package version 0.6.3},
+  url = {https://CRAN.R-project.org/package=modelsummary},
+}
+
+
+
+@article{Knuth.1984,
+  title={Literate programming},
+  author={Knuth, Donald Ervin},
+  journal={The Computer Journal},
+  volume={27},
+  number={2},
+  pages={97--111},
+  year={1984},
+  publisher={Oxford University Press}
+}
+
+
+```
+
+
+{{< pagebreak >}}
+
+# Appendix
+
+In the appendix, we can include additional analyses or a detailed discussion of some key concepts of our paper. 
+
+{{< pagebreak >}}
