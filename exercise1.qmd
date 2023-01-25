@@ -1,0 +1,53 @@
+---
+title: "Exercise 1"
+format: 
+  html:
+    toc: true
+    code-fold: true
+    code-tools: true
+    execute: 
+      echo: true
+  pdf:
+    toc: false
+    execute: 
+      echo: false
+author: "Julia Schulte-Cloos"
+execute: 
+    warning: false
+    message: false
+colorlinks: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+pacman::p_load(
+  tidyverse)
+
+
+
+```
+
+
+
+# Introduction
+
+This is the first sentence in my reproducible document.^[This is only a footnote.]
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pellentesque lacus at lorem blandit cursus. Etiam semper, lectus vitae aliquet aliquet, tellus mauris ullamcorper massa, vel laoreet felis orci quis nibh. Lorem Ipsum is not just random text, contrary to common assumption. It is more than 2000 years old and has origins in a work of classical Latin literature from 45 BC. Sections 1.10.32 and 1.10.33 of Cicero's "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) are where Lorem Ipsum is found. The philosophy of ethics, which was extremely prominent throughout the Renaissance, is the subject of this book. Lorem Ipsum's opening phrase, "Lorem ipsum dolor sit amet," is taken from a Latin phrase. 
+
+:::{#fig-finibus}
+
+![](./figs/de_finibus_bonorum_malorum.jpg){width="20%"}
+
+
+De Finibus Bonorum et Malorum
+:::
+
+The last paragraph in the Pandoc div block that starts with `#fig-` is used as the figure caption.
+
+
+# Conclusion
+
+This is the conclusion and the last sentence of the document. The document was generated on `r lubridate::today()`.
