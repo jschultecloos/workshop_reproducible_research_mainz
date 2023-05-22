@@ -15,8 +15,10 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \ 
 	libxt6 \
 	curl \
-	gdebi-core
+	gdebi-core \
+	python3-pip
 
+RUN pip install IPython jupyter numpy matplotlib
 
 ARG QUARTO_VERSION="1.3.56"
 RUN curl -o quarto-linux-amd64.deb -L https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/quarto-${QUARTO_VERSION}-linux-amd64.deb
@@ -31,7 +33,8 @@ RUN install2.r -r https://cran.microsoft.com/snapshot/${MRAN_BUILD_DATE} \
 	markdown \
 	pacman \
 	kableExtra \
-	tinytex 
+	tinytex \
+	reticulate
 
 # Install Tinytex via quarto
 # As we run this command as rstudio user, TinyTex binaries will be located at:
