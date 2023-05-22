@@ -21,9 +21,9 @@ author:
   - name: Julia Schulte-Cloos
     affiliations:
       - id: eui
-        name: European University Institute
-        city: Florence
-        country: Italy
+        name: University of Marburg
+        city: Marburg
+        country: Germany
     orcid: 0000-0001-7223-3602
   - name: Conrad Coauthor
     affiliations:
@@ -134,7 +134,7 @@ reg_table %>%
 
 ```
 
-Students who smoke, on average, have a `r tidy(models$M1) %>% dplyr::filter(term == "Smoke") %>% pull(estimate) %>% round(., digits=3)` higher resting pulse than students who do not smoke (see @tbl-regression).
+Students who smoke, on average, have a `r broom::tidy(models$M1) %>% dplyr::filter(term == "Smoke") %>% pull(estimate) %>% round(., digits=3)` higher resting pulse than students who do not smoke (see @tbl-regression).
 
 ## Side-by-side tables
 
